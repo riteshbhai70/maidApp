@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+</head>
+<body>
+    <h2>Book a Maid</h2>
+    
+    <button id="pay-btn">Pay Now</button>
+    
+    <script>
+        document.getElementById("pay-btn").addEventListener("click", function() {
+            fetch("/create-order", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ amount: 1 }) // Amount in INR
+            })
+            .then(response => response.json())
+            .then(data => {
+                var options = {
+                    "key": "rzp_test_bWK1RgxVPpjr5S",
+                    "amount": data.amount,
+                    "currency": "INR",
+                    "name": "Maid Booking",
+                    "description": "Payment for maid services",
+                    "order_id": data.order_id,
+                    "handler": function(response) {
+                        alert("Payment Successful! Payment ID: " + response.razorpay_payment_id);
+                    }
+                };
+                var rzp1 = new Razorpay(options);
+                rzp1.open();
+            });
+        });
+    </script>
+</body>
+</html>
